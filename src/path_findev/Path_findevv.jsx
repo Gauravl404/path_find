@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import Node from '../NODE/Node'
-import '../NODE/Node.css'
+
+import './path_findevv.css';
 
 const st_r = 10;
 const st_c = 10;
@@ -24,7 +24,7 @@ const make_grid = () => {
 
 const createNode = (row , col) => {
     return {
-        row , col,
+        row : row, col : col,
         is_st : row === st_r && col === st_c,
         is_en : row === des_r && col === des_c,
         dist: Infinity,
@@ -83,12 +83,11 @@ export default class path_findevv extends Component {
                 {grid.map((row , rowidx) => {
                     return (
                         <div key = {rowidx}>
-                            {row.map((node ,nodeidx) => {
+                            {row.map((node ,nodeIdx) => {
                                 const {row, col, isFinish, isStart, isWall} = node;
-                                return <Node>
-                                    key = {nodeidx}
-                                    row = {row}
-                                    col = {col}
+                                return <Node
+                                    key={nodeIdx}
+                                    col={col}
                                     isFinish={isFinish}
                                     isStart={isStart}
                                     isWall={isWall}
@@ -98,6 +97,7 @@ export default class path_findevv extends Component {
                                         this.handleMouseEnter(row, col)
                                     }
                                     onMouseUp={() => this.handleMouseUp()}
+                                    row={row}>
                                 </Node>
                             })}
                         </div>
