@@ -24,14 +24,23 @@ const make_grid = () => {
 
 const createNode = (row , col) => {
     return {
-        row , col
+        row , col,
+        is_st : row === st_r && col === st_c,
+        is_en : row === des_r && col === des_c,
+        dist: Infinity,
+        isvisited : false,
+        isWall : false,
+        previousNode : null,
+
     };
 }
 
+const getNewgridWall = (grid , row, col) => {
+    const newG = grid.slice();
+    newG[row][col].isWall = !newG[row][col].isWall;
+    return newG;
+};
 
-const fun = () => {
-
-}
 
 export default class path_findevv extends Component {
     constructor() {
@@ -47,6 +56,23 @@ export default class path_findevv extends Component {
         this.setState({grid});
     }
     
+
+    handleMouseDown(row, col) {
+        const newgrid = getNewgridWall(this.state.grid , row, col);
+        this.setState({grid : newgrid , mouseIsPressed : true});
+    }
+    handleMouseEnter(row, col) {
+        if(!this.state.mouseIsPressed) {
+            return;
+        }
+        const newgrid = getNewgridWall(this.state.grid , row, col);
+        this.setState({grid: newgrid});
+    }
+
+    handleMouseUp() {
+        this.setState({mouseIsPressed : false});
+    }
+
     render() {
         const {grid, mouseIsPressed} = this.state;
         
@@ -58,10 +84,20 @@ export default class path_findevv extends Component {
                     return (
                         <div key = {rowidx}>
                             {row.map((node ,nodeidx) => {
-                                const   {row, col } = node;
+                                const {row, col, isFinish, isStart, isWall} = node;
                                 return <Node>
+                                    key = {nodeidx}
                                     row = {row}
                                     col = {col}
+                                    isFinish={isFinish}
+                                    isStart={isStart}
+                                    isWall={isWall}
+                                    mouseIsPressed={mouseIsPressed}
+                                    onMouseDown={(row, col) => this.handleMouseDown(row, col)}
+                                    onMouseEnter={(row, col) =>
+                                        this.handleMouseEnter(row, col)
+                                    }
+                                    onMouseUp={() => this.handleMouseUp()}
                                 </Node>
                             })}
                         </div>
