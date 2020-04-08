@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Node from '../NODE/Node'
-
+import { dijikstra , getNodeshortest} from '../algorithms/dijikstra';
 import './path_findevv.css';
 
 const st_r = 10;
@@ -25,9 +25,9 @@ const make_grid = () => {
 const createNode = (row , col) => {
     return {
         row : row, col : col,
-        is_st : row === st_r && col === st_c,
-        is_en : row === des_r && col === des_c,
-        dist: Infinity,
+        isStart : row === st_r && col === st_c,
+        isFinish : row === des_r && col === des_c,
+        distance: Infinity,
         isvisited : false,
         isWall : false,
         previousNode : null,
@@ -73,13 +73,49 @@ export default class path_findevv extends Component {
         this.setState({mouseIsPressed : false});
     }
 
+
+    animatemain(visitedNodeOrder , nodeINshortestPath) {
+        for(let i = 0 ; i <= visitedNodeOrder.length ; i++) {
+
+            if(i === visitedNodeOrder.length) {
+                setTimeout(() => {
+                    this.animateshort(nodeINshortestPath);
+                }, 10 * i);
+                continue;
+            }
+            setTimeout(() => {
+                const node = visitedNodeOrder[i];
+                document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-visited';
+            } , 10 * i);
+        }
+    }
+
+    animateshort(nodeINshortestPath) {
+        for(let i = 0; i < nodeINshortestPath.length ; i++) {
+            //console.log("Dasdadadsa");
+            setTimeout(() => {
+                const node = nodeINshortestPath[i];
+                document.getElementById(`node-${node.row}-${node.col}`).className = 'node node-shortest-path';
+            } , 50 * i);
+        }
+    }
+    dijikstraAlgorithm() {
+        const {grid}= this.state;
+        const startNode = grid[st_r][st_c];
+        const finishNode = grid[des_r][des_c];
+        const visitedNodeOrder = dijikstra(grid, startNode , finishNode);
+        const nodeINshortestPath = getNodeshortest(finishNode);
+        this.animatemain(visitedNodeOrder , nodeINshortestPath);
+    }
+
     render() {
         const {grid, mouseIsPressed} = this.state;
         
         return(
             <>
             <button type ="button" onClick= {() => this.initializeComponent()}> grid</button>
-            <div className = "grid">
+            <button type = "button" onClick = {() => this.dijikstraAlgorithm()}> dijikstra</button>
+            <div className = 'grid'>
                 {grid.map((row , rowidx) => {
                     return (
                         <div key = {rowidx}>

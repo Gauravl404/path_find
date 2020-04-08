@@ -21,7 +21,6 @@ export default class Node extends Component {
       : isWall
       ? 'node-wall'
       : '';
-    const i = 1023;
     return (
       <div
         id={`node-${row}-${col}`}
